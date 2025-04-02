@@ -69,15 +69,21 @@ const NoteApp = (() => {
 
     // Make links clickable with CTRL pressed
     document.addEventListener("keydown", e => {
-      if (e.key === "Control" || e.key === "Meta") {
-        // "Meta" for Mac Command key
+      if ((e.ctrlKey || e.metaKey) && e.key === "a") {
+        e.preventDefault(); // Prevent the default "select all" behavior
+        const range = document.createRange();
+        range.selectNodeContents(textArea); // Select all content inside #note-content
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+      } else if (e.ctrlKey || e.metaKey) {
         activateHyperlinks();
         textArea.contentEditable = false;
       }
     });
 
     document.addEventListener("keyup", e => {
-      if (e.key === "Control" || e.key === "Meta") {
+      if (e.ctrlKey || e.metaKey) {
         textArea.contentEditable = true;
       }
     });
