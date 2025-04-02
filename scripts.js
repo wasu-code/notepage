@@ -85,7 +85,8 @@ const NoteApp = (() => {
     // Add keyboard shortcuts for page navigation
     document.addEventListener("keydown", e => {
       if (e.key === "Escape") {
-        // Unfocus the textArea
+        // Unfocus the textArea and save note
+        saveNote();
         textArea.blur();
       } else if (document.activeElement !== textArea) {
         // Only handle page navigation if textArea is not focused
@@ -93,8 +94,11 @@ const NoteApp = (() => {
           changePage(-1); // Go to the previous page
           e.preventDefault(); // Prevent default scrolling behavior
         } else if (e.key === "ArrowRight") {
-          changePage(1); // Go to the next page
-          e.preventDefault(); // Prevent default scrolling behavior
+          changePage(1);
+          e.preventDefault();
+        } else {
+          // Focus the textArea if key other than navigation key is pressed
+          textArea.focus();
         }
       }
     });
