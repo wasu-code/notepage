@@ -43,7 +43,7 @@ const NoteApp = (() => {
   }
 
   function loadAndSetSettings() {
-    const settingsDiv = document.querySelector("#settings-sheet div");
+    const settingsDiv = document.querySelector("#settings-sheet div.toggles");
     const toggleInputs = settingsDiv.querySelectorAll("input[data-key]");
 
     toggleInputs.forEach(input => {
@@ -81,6 +81,33 @@ const NoteApp = (() => {
         textArea.contentEditable = true;
       }
     });
+
+    // Add keyboard shortcuts for page navigation
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        // Unfocus the textArea
+        textArea.blur();
+      } else if (document.activeElement !== textArea) {
+        // Only handle page navigation if textArea is not focused
+        if (e.key === "ArrowLeft") {
+          changePage(-1); // Go to the previous page
+          e.preventDefault(); // Prevent default scrolling behavior
+        } else if (e.key === "ArrowRight") {
+          changePage(1); // Go to the next page
+          e.preventDefault(); // Prevent default scrolling behavior
+        }
+      }
+    });
+  }
+
+  function changePage(delta) {
+    const newPage = Math.max(1, parseInt(currentPage) + delta); // Ensure the page number is at least 1
+    if (newPage !== currentPage) {
+      currentPage = newPage;
+      localStorage.setItem("notepage-current", currentPage);
+      loadNote(currentPage);
+      document.querySelector("h1").textContent = `Page ${currentPage}`;
+    }
   }
 
   function start() {
