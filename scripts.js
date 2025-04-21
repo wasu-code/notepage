@@ -1,16 +1,19 @@
 const NoteApp = (() => {
-  let textArea = null;
+  let editor = null;
+  let viewer = null;
   let currentPage = 1;
   const LINK_REGEX = /((https?:\/\/)?([\w-]+\.)?[\w-]+\.[a-z]{2,}(\/[^\s]*)?)/g;
 
   function loadNote(page) {
     const noteContent = localStorage.getItem(`notepage-${page}`);
-    textArea.innerText = noteContent ?? "";
+    editor.value = noteContent ?? "";
+    viewer.innerText = noteContent ?? "";
+    activateHyperlinks();
   }
 
   function saveNote() {
     try {
-      localStorage.setItem(`notepage-${currentPage}`, textArea.innerText);
+      localStorage.setItem(`notepage-${currentPage}`, editor.value);
     } catch (e) {
       console.error("Failed to save note:", e);
       window.alert("Saving failed");
@@ -26,7 +29,7 @@ const NoteApp = (() => {
   }
 
   function activateHyperlinks() {
-    textArea.innerHTML = textArea.innerText.replace(
+    viewer.innerHTML = editor.value.replace(
       LINK_REGEX,
       '<a href="$1" target="_blank">$1</a>'
     );
@@ -35,7 +38,7 @@ const NoteApp = (() => {
   function toggleSetting(key, value) {
     switch (key) {
       case "spellcheck":
-        textArea.spellcheck = value;
+        editor.spellcheck = value;
         break;
       default:
         console.warn(`Tried to set unsupported settings key: ${key}`);
@@ -65,37 +68,40 @@ const NoteApp = (() => {
 
   function addEventListeners() {
     // Auto-save note
-    textArea.addEventListener("input", debounce(saveNote, 300));
+    editor.addEventListener("input", debounce(saveNote, 300));
 
     // Make links clickable with CTRL pressed
-    document.addEventListener("keydown", e => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "a") {
-        e.preventDefault(); // Prevent the default "select all" behavior
-        const range = document.createRange();
-        range.selectNodeContents(textArea); // Select all content inside #note-content
-        const selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
-      } else if (e.ctrlKey || e.metaKey) {
-        activateHyperlinks();
-        textArea.contentEditable = false;
-      }
-    });
+    // document.addEventListener("keydown", e => {
+    //   if (e.ctrlKey || e.metaKey) {
+    //     editor.style.display = "none";
+    //     viewer.style.display = "block";
+    //     activateHyperlinks();
+    //   }
+    // });
 
-    document.addEventListener("keyup", e => {
-      if (e.ctrlKey || e.metaKey) {
-        textArea.contentEditable = true;
-      }
-    });
+    // document.addEventListener("keyup", e => {
+    //   if (e.key == "Control" && !e.ctrlKey) {
+    //     editor.style.display = "block";
+    //     viewer.style.display = "none";
+    //   }
+    // });
 
     // Add keyboard shortcuts for page navigation
     document.addEventListener("keydown", e => {
       if (e.key === "Escape") {
-        // Unfocus the textArea and save note
         saveNote();
-        textArea.blur();
-      } else if (document.activeElement !== textArea) {
-        // Only handle page navigation if textArea is not focused
+        // Toggle display of viewer and editor
+        if (editor.style.display !== "none") {
+          editor.style.display = "none";
+          viewer.style.display = "block";
+          activateHyperlinks();
+        } else {
+          viewer.style.display = "none";
+          editor.style.display = "block";
+          editor.focus();
+        }
+      } else if (document.activeElement !== editor) {
+        // Only handle page navigation if editor is not focused
         if (e.key === "ArrowLeft") {
           changePage(-1); // Go to the previous page
           e.preventDefault(); // Prevent default scrolling behavior
@@ -103,8 +109,8 @@ const NoteApp = (() => {
           changePage(1);
           e.preventDefault();
         } else {
-          // Focus the textArea if key other than navigation key is pressed
-          textArea.focus();
+          // Focus the editor if key other than navigation key is pressed
+          editor.focus();
         }
       }
     });
@@ -121,14 +127,15 @@ const NoteApp = (() => {
   }
 
   function start() {
-    textArea = document.querySelector("#note-content");
+    editor = document.querySelector("#editor");
+    viewer = document.querySelector("#viewer");
     currentPage = localStorage.getItem("notepage-current") ?? 1;
 
     loadNote(currentPage);
     document.querySelector("h1").textContent = `Page ${currentPage}`;
 
-    textArea.contentEditable = true;
-    textArea.focus();
+    editor.contentEditable = true;
+    editor.focus();
 
     addEventListeners();
     loadAndSetSettings();

@@ -16,7 +16,8 @@ body {
   user-select: none;
 }
 
-#note-content {
+#editor,
+#viewer {
   all: unset;
   box-sizing: border-box;
   background-color: #f7dfc6;
@@ -28,6 +29,10 @@ body {
   padding: 1em;
   font-size: larger;
   user-select: text;
+}
+
+#viewer {
+  display: none;
 }
 
 h1 {
