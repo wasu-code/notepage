@@ -44,6 +44,12 @@ const NoteApp = (() => {
       case "spellcheck":
         editor.spellcheck = value;
         break;
+      case "autocapitalize":
+        editor.autocapitalize = value ? "on" : "off";
+        break;
+      case "autocorrect":
+        editor.autocorrect = value ? "on" : "off";
+        break;
       default:
         console.warn(`Tried to set unsupported settings key: ${key}`);
     }
@@ -139,6 +145,7 @@ const NoteApp = (() => {
   function start() {
     editor = document.querySelector("#editor");
     viewer = document.querySelector("#viewer");
+    settingsButton = document.querySelector("#settings-btn");
     currentPage = localStorage.getItem("notepage-current") ?? 1;
 
     loadNote(currentPage);

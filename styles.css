@@ -113,6 +113,12 @@ body {
   visibility: visible;
 }
 
+.toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+}
+
 #settings-sheet label {
   border-radius: 2em;
   padding: 0.2em 0.3em;
