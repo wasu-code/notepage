@@ -99,7 +99,7 @@ body {
   top: 0;
   right: 0;
   width: 20em;
-  max-width: 90svw;
+  max-width: 70svw;
   height: 100svh;
   padding: 6em 1em 1em 1em;
   border-radius: 1em 0 0 1em;
@@ -107,6 +107,24 @@ body {
   visibility: hidden;
   font-size: larger;
   color: #f7dfc6;
+}
+
+#settings-sheet::after {
+  content: "Close settings";
+  color: #6a4f4fcc;
+  font-variant: small-caps;
+  transform: rotate(-90deg) translateX(50%);
+  position: absolute;
+  left: -4em;
+  top: 50%;
+  pointer-events: none;
+  user-select: none;
+}
+
+#settings-sheet::before {
+  content: "NotePage settings";
+  position: absolute;
+  top: 1.5em;
 }
 
 #settings-sheet:hover {
