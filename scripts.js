@@ -29,10 +29,14 @@ const NoteApp = (() => {
   }
 
   function activateHyperlinks() {
-    viewer.innerHTML = editor.value.replace(
-      LINK_REGEX,
-      '<a href="$1" target="_blank">$1</a>'
-    );
+    viewer.innerHTML = editor.value.replace(LINK_REGEX, match => {
+      // Add protocol if missing
+      const url =
+        match.startsWith("http://") || match.startsWith("https://")
+          ? match
+          : "https://" + match;
+      return `<a href="${url}" target="_blank">${match}</a>`;
+    });
   }
 
   function toggleSetting(key, value) {
@@ -66,40 +70,46 @@ const NoteApp = (() => {
     });
   }
 
+  /**
+   * Toggle between editor and viewer
+   * When switching to viewer, save the note and activate hyperlinks
+   * When switching to editor, focus the editor
+   */
+  function toggleEditor() {
+    if (editor.style.display !== "none") {
+      editor.style.display = "none";
+      viewer.style.display = "block";
+      activateHyperlinks();
+    } else {
+      viewer.style.display = "none";
+      editor.style.display = "block";
+      editor.focus();
+    }
+  }
+
   function addEventListeners() {
     // Auto-save note
     editor.addEventListener("input", debounce(saveNote, 300));
 
-    // Make links clickable with CTRL pressed
-    // document.addEventListener("keydown", e => {
-    //   if (e.ctrlKey || e.metaKey) {
-    //     editor.style.display = "none";
-    //     viewer.style.display = "block";
-    //     activateHyperlinks();
-    //   }
-    // });
+    // Pagination buttons
+    document.querySelector(".page-prev").addEventListener("click", () => {
+      changePage(-1);
+    });
 
-    // document.addEventListener("keyup", e => {
-    //   if (e.key == "Control" && !e.ctrlKey) {
-    //     editor.style.display = "block";
-    //     viewer.style.display = "none";
-    //   }
-    // });
+    document.querySelector(".page-next").addEventListener("click", () => {
+      changePage(1);
+    });
+
+    // Activate hyperlinks when editor lose focus
+    editor.addEventListener("blur", toggleEditor);
+    // Activate editor when viewer clicked
+    viewer.addEventListener("click", toggleEditor);
 
     // Add keyboard shortcuts for page navigation
     document.addEventListener("keydown", e => {
       if (e.key === "Escape") {
         saveNote();
-        // Toggle display of viewer and editor
-        if (editor.style.display !== "none") {
-          editor.style.display = "none";
-          viewer.style.display = "block";
-          activateHyperlinks();
-        } else {
-          viewer.style.display = "none";
-          editor.style.display = "block";
-          editor.focus();
-        }
+        editor.blur(); // Trigger blur event to switch to viewer
       } else if (document.activeElement !== editor) {
         // Only handle page navigation if editor is not focused
         if (e.key === "ArrowLeft") {
@@ -110,7 +120,7 @@ const NoteApp = (() => {
           e.preventDefault();
         } else {
           // Focus the editor if key other than navigation key is pressed
-          editor.focus();
+          toggleEditor();
         }
       }
     });

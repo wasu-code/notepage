@@ -35,8 +35,44 @@ body {
   display: none;
 }
 
-h1 {
+.top-bar {
   color: #646464;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.top-bar button {
+  all: unset;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.bottom-bar {
+  position: sticky;
+  bottom: 1em;
+  margin-top: 1em;
+  display: flex;
+  column-gap: 2em;
+  row-gap: 0.5em;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#editor:not(:focus-within) + * + .bottom-bar .viewer-navigation kbd {
+  outline: 2px solid transparent; /* fallback */
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #fb923c;
+  border-radius: 0.25rem;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+#editor:focus-within + * + .bottom-bar .editor-navigation kbd {
+  outline: 2px solid transparent; /* fallback */
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #fb923c;
+  border-radius: 0.25rem;
+  transition: box-shadow 0.2s ease-in-out;
 }
 
 #settings-btn {
@@ -93,4 +129,18 @@ label:has(input[type="checkbox"]:checked)::after {
   content: "✔";
   font-size: medium;
   color: #f7dfc6;
+}
+
+kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  vertical-align: baseline;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  line-height: 1.4;
+  color: #333;
+  background: #f7f7f7;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
 }

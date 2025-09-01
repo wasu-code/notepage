@@ -8,9 +8,29 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1></h1>
-    <textarea id="editor" spellcheck="false"></textarea>
+    <div class="top-bar">
+      <button class="page-prev">⬅️</button>
+      <h1>Page ?</h1>
+      <button class="page-next">➡️</button>
+    </div>
+
+    <textarea
+      id="editor"
+      placeholder="Your fantastic note starts here..."
+      spellcheck="false"
+      autocapitalize="off"
+      autocorrect="on"
+    ></textarea>
     <div id="viewer"></div>
+
+    <div class="bottom-bar">
+      <span class="editor-navigation">
+        <kbd>Esc</kbd> - allow navigation, activate links
+      </span>
+      <span class="viewer-navigation">
+        <kbd>&lt;</kbd> and <kbd>&gt;</kbd> - navigate between pages
+      </span>
+    </div>
 
     <div id="settings-sheet">
       <button id="settings-btn">⚙️</button>
@@ -21,6 +41,7 @@
         </label>
       </div>
     </div>
+
     <script src="scripts.js"></script>
   </body>
 </html>
